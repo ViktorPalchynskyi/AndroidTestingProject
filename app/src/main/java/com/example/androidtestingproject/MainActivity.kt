@@ -27,6 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +70,6 @@ fun Content(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center
     ) {
-        // Поле ввода
         TextField(
             value = text,
             onValueChange = onTextChange,
@@ -75,10 +77,29 @@ fun Content(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Сообщение об ошибке
         if (errorMessage != null) {
             ErrorMessage(errorMessage = errorMessage)
         }
+    }
+}
+
+@Composable
+fun SubmitButton(isFormValid: Boolean) {
+    val context = LocalContext.current
+
+    Button(
+        onClick = {
+            val intent = Intent(context, WebViewActivity::class.java)
+            intent.putExtra("URL", "https://github.com/ViktorPalchynskyi")
+            context.startActivity(intent)
+        },
+        enabled = isFormValid,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isFormValid) Color.Blue else Color.Gray
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(text = "Submit", color = Color.White)
     }
 }
 
@@ -130,15 +151,6 @@ fun RenderInputs(innerPadding: PaddingValues) {
 
         val isFormValid = usernameError == null && passwordError == null && username.isNotEmpty() && password.isNotEmpty()
 
-        Button(
-            onClick = { println("Click") },
-            enabled = isFormValid,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = if (isFormValid) Color.Blue else Color.Gray
-            ),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Submit", color = Color.White)
-        }
+        SubmitButton(isFormValid)
     }
 }
