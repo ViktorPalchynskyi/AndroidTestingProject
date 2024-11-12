@@ -17,7 +17,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun createNotificationChannel() {
-        println(Build.VERSION.SDK_INT)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channelId = "default_channel_id"
             val channelName = "Default Channel"
@@ -34,11 +33,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        val title = remoteMessage.notification?.title ?: remoteMessage.data["title"]
-        val message = remoteMessage.notification?.body ?: remoteMessage.data["message"]
-        println(remoteMessage.notification)
-        if (title != null && message != null) {
-            showNotification(title, message)
+        val sharedPreferences = getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val isNotificationsEnabled = sharedPreferences.getBoolean("notifications_enabled", true)
+
+        if (isNotificationsEnabled) {
+            val title = remoteMessage.notification?.title ?: remoteMessage.data["title"]
+            val message = remoteMessage.notification?.body ?: remoteMessage.data["message"]
+
+            if (title != null && message != null) {
+                showNotification(title, message)
+            }
         }
     }
 

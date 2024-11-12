@@ -1,6 +1,7 @@
 package com.example.androidtestingproject
 
 import android.Manifest
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -36,6 +37,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessaging
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+
 
 
 class MainActivity : ComponentActivity() {
@@ -78,7 +82,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 
 @Composable
 fun ErrorMessage(errorMessage: String?, modifier: Modifier = Modifier,) {
@@ -137,6 +140,28 @@ fun SubmitButton(isFormValid: Boolean) {
 }
 
 @Composable
+fun NotificationSettingsScreen(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+    var isNotificationsEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("notifications_enabled", true))
+    }
+
+    Column(modifier = modifier.padding(16.dp)) {
+        Text(text = "Enable Notifications")
+
+        Switch(
+            checked = isNotificationsEnabled,
+            onCheckedChange = { isChecked ->
+                isNotificationsEnabled = isChecked
+                sharedPreferences.edit().putBoolean("notifications_enabled", isChecked).apply()
+            }
+        )
+    }
+}
+
+
+@Composable
 fun RenderInputs(innerPadding: PaddingValues) {
     Column(
         modifier = Modifier
@@ -185,5 +210,6 @@ fun RenderInputs(innerPadding: PaddingValues) {
         val isFormValid = usernameError == null && passwordError == null && username.isNotEmpty() && password.isNotEmpty()
 
         SubmitButton(isFormValid)
+        NotificationSettingsScreen()
     }
 }
