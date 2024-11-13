@@ -28,7 +28,7 @@ class WebViewActivity : ComponentActivity() {
 fun WebViewScreen(url: String) {
     var canGoBack by remember { mutableStateOf(false) }
     var canGoForward by remember { mutableStateOf(false) }
-    var webView: WebView? = null // Инициализация переменной webView
+    var webView: WebView? = null
 
     Column(modifier = Modifier.fillMaxSize()) {
         AndroidView(
